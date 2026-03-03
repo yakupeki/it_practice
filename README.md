@@ -55,6 +55,11 @@ mvn -pl app spring-boot:run
 - このリポジトリでは、今後のコミット先を `master` ブランチに統一します。
 - GitHub Actions の自動デプロイは `master` への push でも実行されます。
 
+
+## master にマージできない時
+競合が出た場合は `docs/MERGE_GUIDE.md` の手順で、
+ローカルで `master` を取り込んで解消コミットを作成してください。
+
 ## Render/Railway 配備
 - Render: Build command `mvn -pl app -am package`, Start command `cd app && java -Dserver.port=$PORT -jar target/sample-app-1.0.0.jar`
 - Railway: 同様に jar 実行。`DB_*` を設定すると PostgreSQL を利用可能。

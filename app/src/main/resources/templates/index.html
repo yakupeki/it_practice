@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SampleApp - 入力メモ管理</title>
+  <style>
+    body { font-family: sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+    .error { color: #b00020; }
+    input { width: 100%; padding: .6rem; margin-top: .5rem; }
+    button { margin-top: .8rem; padding: .6rem 1rem; }
+  </style>
+</head>
+<body>
+<h1>入力メモ管理アプリ</h1>
+<p>全角/半角ゆらぎや余分な空白は YCF により自動で正規化されます。</p>
+
+<div class="card">
+  <form method="post" th:action="@{/messages}" th:object="${form}">
+    <label for="content">メッセージ (100文字以内)</label>
+    <input id="content" type="text" th:field="*{content}" placeholder="例) 　ＡＢＣ　テスト　 ">
+    <div class="error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+    <button type="submit">保存する</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>保存済みメッセージ</h2>
+  <ul>
+    <li th:each="msg : ${messages}">
+      <strong th:text="${msg.content}"></strong>
+      <small th:text="${#temporals.format(msg.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></small>
+    </li>
+  </ul>
+</div>
+</body>
+</html>

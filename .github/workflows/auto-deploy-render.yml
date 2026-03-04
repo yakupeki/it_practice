@@ -1,0 +1,48 @@
+name: Auto Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not set. Skipping deploy."
+            exit 0
+          fi
+
+          echo "Triggering Render deploy hook..."
+          curl --fail --show-error --silent \
+            --request POST \
+            "$RENDER_DEPLOY_HOOK_URL"
+
+      - name: Optional health check
+        env:
+          APP_HEALTHCHECK_URL: ${{ secrets.APP_HEALTHCHECK_URL }}
+        run: |
+          if [ -z "$APP_HEALTHCHECK_URL" ]; then
+            echo "APP_HEALTHCHECK_URL is not set. Skipping health check."
+            exit 0
+          fi
+
+          echo "Waiting for deployment and checking health endpoint..."
+          for i in $(seq 1 30); do
+            if curl --fail --silent "$APP_HEALTHCHECK_URL" > /dev/null; then
+              echo "Health check passed."
+              exit 0
+            fi
+            echo "Not ready yet (${i}/30). Waiting 10s..."
+            sleep 10
+          done
+
+          echo "Health check failed within timeout."
+          exit 1

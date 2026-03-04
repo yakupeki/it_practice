@@ -38,33 +38,6 @@ mvn -pl app spring-boot:run
 
 
 
-## 完全初心者向けガイド
-「どのアプリで、どこにコマンドを入れるのか」まで含めた手順は
-`docs/BEGINNER_GUIDE.md` を参照してください。
-
-## Gitコミット後に自動デプロイする方法（ダウンロード不要）
-以下を一度設定すれば、**`main` / `master` へ push するたびに自動デプロイ**されます。
-
-1. Render で Web Service を作成し、`app` ディレクトリをビルド対象にする（またはルートで `mvn -pl app -am package`）。
-2. Render の **Deploy Hook URL** を発行する。
-3. GitHub リポジトリの `Settings > Secrets and variables > Actions` に以下を登録:
-   - `RENDER_DEPLOY_HOOK_URL` : Render の Deploy Hook URL（必須）
-   - `APP_HEALTHCHECK_URL` : デプロイ後に疎通確認するURL（任意、例: `https://<your-app>.onrender.com/api/messages`）
-
-設定後は `.github/workflows/auto-deploy-render.yml` が push を検知して Render へデプロイ要求を送ります。
-
-> 補足: PR では `.github/workflows/ci.yml` が自動で `mvn -q test` を実行します。
-
-
-## 開発ブランチ運用
-- このリポジトリでは、今後のコミット先を `master` ブランチに統一します。
-- GitHub Actions の自動デプロイは `master` への push でも実行されます。
-
-
-## master にマージできない時
-競合が出た場合は `docs/MERGE_GUIDE.md` の手順で、
-ローカルで `master` を取り込んで解消コミットを作成してください。
-
 ## Render/Railway 配備
 - Render: Build command `mvn -pl app -am package`, Start command `cd app && java -Dserver.port=$PORT -jar target/sample-app-1.0.0.jar`
 - Railway: 同様に jar 実行。`DB_*` を設定すると PostgreSQL を利用可能。
